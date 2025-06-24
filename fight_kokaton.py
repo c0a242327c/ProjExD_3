@@ -169,6 +169,7 @@ def main():
         if bomb is not None:
             if beam is not None:
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾が衝突していたら
+                    bird.change_img(6, screen)
                     beam = None
                     bomb = None
 
