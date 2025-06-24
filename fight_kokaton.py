@@ -127,7 +127,25 @@ class Beam:
         """
         if check_bound(self.rct) == (True, True):
             self.rct.move_ip(self.vx, self.vy)
-            screen.blit(self.img, self.rct)     
+            screen.blit(self.img, self.rct)  
+
+
+class Explosion:
+    """
+    爆弾が破壊されたときの爆発エフェクトを管理するクラス
+    """   
+    imgs = [pg.image.load(f"fig/explosion.gif") for i in range(5)]
+    def __init__(self, center: tuple[int,int]):
+        self.imgs = __class__.imgs
+        self.index = 0
+        self.rct = self.imgs[0].get_rect()
+        self.rct.center = center
+        self.life = len(self.imgs) * 5
+
+    def update(self, screen: pg.Surface):
+        self.index = (len(self.imgs) * 5 - self.life) // 5
+        screen.blit(self.imgs[self.index], self.rct)
+        self.life -= 1
 
 
 class Bomb:
@@ -169,6 +187,7 @@ def main():
     score = Score()
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     beams = [] # 複数のビームを格納するリスト
+    explosions = []  # 爆発エフェクトのリスト
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -200,6 +219,7 @@ def main():
                     bombs[i] = None
                     bird.change_img(6, screen)
                     score.score += 1
+                    explosions.append(Explosion(bomb.rct.center))
         beams = [beam for beam in beams if beam is not None and check_bound(beam.rct)[0]]
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -210,6 +230,9 @@ def main():
         for bomb in bombs:
             bomb.update(screen)
         score.update(screen)
+        for ex in explosions:
+            ex.update(screen)
+        explosions = [ex for ex in explosions if ex.life > 0 ]
         pg.display.update()
         tmr += 1
         clock.tick(50)
