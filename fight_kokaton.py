@@ -125,7 +125,6 @@ class Beam:
         angle = -math.degrees(math.atan2(self.vy, self.vx))
         self.img = pg.transform.rotozoom(self.img, angle, 1.0)
         
-
     def update(self, screen: pg.Surface):
         """
         ビームを速度ベクトルself.vx, self.vyに基づき移動させる
